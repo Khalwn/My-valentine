@@ -2,60 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Valentine</title>
 
 <style>
+:root{
+    --accent:#ff4d6d;
+}
+
 body{
     margin:0;
-    font-family:system-ui, sans-serif;
+    font-family:system-ui,-apple-system,sans-serif;
     height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#fad0c4,#a1c4fd);
+    background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#a1c4fd,#ffd1ff);
     background-size:400% 400%;
-    animation:bg 10s ease infinite;
+    animation:bg 12s ease infinite;
     overflow:hidden;
 }
 
 @keyframes bg{
-    0%{background-position:0 50%}
+    0%,100%{background-position:0 50%}
     50%{background-position:100% 50%}
-    100%{background-position:0 50%}
 }
 
+/* Card */
 .card{
-    background:white;
-    padding:40px;
-    border-radius:18px;
+    backdrop-filter:blur(14px);
+    background:rgba(255,255,255,.85);
+    padding:45px 40px;
+    border-radius:22px;
     text-align:center;
-    box-shadow:0 20px 50px rgba(0,0,0,.2);
+    box-shadow:0 25px 60px rgba(0,0,0,.15);
     max-width:520px;
-    position:relative;
 }
 
-h1{margin-bottom:25px}
+h1{
+    margin-bottom:30px;
+    font-weight:600;
+    letter-spacing:.4px;
+}
 
+/* Buttons */
 button{
     border:none;
-    padding:14px 30px;
-    font-size:18px;
-    border-radius:30px;
+    padding:14px 32px;
+    font-size:17px;
+    border-radius:40px;
     cursor:pointer;
-    margin:10px;
-    transition:.25s;
+    margin:12px;
+    transition:.25s ease;
 }
 
 #yes{
-    background:#ff4d6d;
+    background:var(--accent);
     color:white;
 }
 
-#no{
-    background:#eee;
+#yes:hover{
+    transform:scale(1.07);
 }
 
+#no{
+    background:#ececec;
+}
+
+/* Final overlay */
 #final{
     position:fixed;
     inset:0;
@@ -63,19 +77,27 @@ button{
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    font-size:28px;
     background:rgba(255,255,255,.95);
+    font-size:30px;
+    font-weight:500;
+    text-align:center;
 }
 
+/* Floating hearts */
 .heart{
     position:fixed;
-    font-size:24px;
+    font-size:22px;
+    opacity:.85;
     animation:float 4s linear forwards;
 }
 
 @keyframes float{
     from{transform:translateY(0);opacity:1}
-    to{transform:translateY(-100vh);opacity:0}
+    to{transform:translateY(-110vh);opacity:0}
+}
+
+@media(max-width:520px){
+    .card{margin:20px}
 }
 </style>
 </head>
@@ -83,7 +105,7 @@ button{
 <body>
 
 <div class="card">
-    <h1>Would you be my Valentine?</h1>
+    <h1>Will you be my Valentine?</h1>
     <button id="yes">Yes</button>
     <button id="no">No</button>
 </div>
@@ -98,26 +120,30 @@ const yesBtn=document.getElementById("yes");
 const final=document.getElementById("final");
 const typed=document.getElementById("typed");
 
-let noScale=1;
+let scale=1;
 const noTexts=[
- "No",
- "Are you sure?",
- "Think again",
- "Last chance",
- "That seems wrong"
+"No",
+"Sure?",
+"Think again",
+"Last chance",
+"Still no?"
 ];
 let i=0;
 
 noBtn.onclick=()=>{
-    noScale*=0.75;
-    noBtn.style.transform=`scale(${noScale}) rotate(${Math.random()*20-10}deg)`;
-    noBtn.textContent=noTexts[i%noTexts.length];
-    i++;
+    scale*=0.75;
+    noBtn.style.transform=`scale(${scale}) rotate(${Math.random()*16-8}deg)`;
+    noBtn.textContent=noTexts[i++%noTexts.length];
+
+    /* slight escape movement */
+    noBtn.style.position="relative";
+    noBtn.style.left=(Math.random()*60-30)+"px";
+    noBtn.style.top=(Math.random()*30-15)+"px";
 };
 
 yesBtn.onclick=()=>{
     final.style.display="flex";
-    typeText("Excellent decision. Valentine confirmed.");
+    typeText("Good choice. Valentine confirmed.");
     hearts();
 };
 
@@ -127,7 +153,7 @@ function typeText(text){
     const t=setInterval(()=>{
         typed.textContent+=text[idx++];
         if(idx>=text.length) clearInterval(t);
-    },40);
+    },35);
 }
 
 function hearts(){
@@ -139,7 +165,7 @@ function hearts(){
         h.style.bottom="-20px";
         document.body.appendChild(h);
         setTimeout(()=>h.remove(),4000);
-    },250);
+    },260);
 }
 </script>
 
