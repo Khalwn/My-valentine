@@ -3,59 +3,86 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Valentine</title>
+<title>For You</title>
 
 <style>
+:root{
+  --pink:#ff4d6d;
+}
+
 body{
   margin:0;
   height:100vh;
+  font-family:system-ui,-apple-system,sans-serif;
   display:flex;
   justify-content:center;
   align-items:center;
-  font-family:system-ui,-apple-system,sans-serif;
-  background:linear-gradient(-45deg,#ff758c,#ff7eb3,#65c7f7,#9cecfb);
-  background-size:400% 400%;
-  animation:bg 12s ease infinite;
+  background:radial-gradient(circle at top,#ff7eb3,#ff758c,#2b2b2b);
   overflow:hidden;
+  color:white;
 }
 
-@keyframes bg{
-  0%,100%{background-position:0 50%}
-  50%{background-position:100% 50%}
+/* subtle animated glow */
+body::before{
+  content:"";
+  position:fixed;
+  inset:-50%;
+  background:conic-gradient(from 0deg,#ff4d6d33,#ffffff11,#ff4d6d33);
+  animation:spin 18s linear infinite;
+  filter:blur(80px);
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
 }
 
 .card{
-  background:rgba(255,255,255,.92);
-  padding:50px 40px;
-  border-radius:24px;
+  position:relative;
+  z-index:2;
+  backdrop-filter:blur(18px);
+  background:rgba(255,255,255,.08);
+  padding:55px 45px;
+  border-radius:28px;
   text-align:center;
-  box-shadow:0 30px 70px rgba(0,0,0,.25);
-  max-width:520px;
+  max-width:620px;
+  box-shadow:0 40px 100px rgba(0,0,0,.45);
 }
 
 h1{
-  margin-bottom:30px;
   font-weight:600;
+  margin-bottom:30px;
+  font-size:32px;
+  letter-spacing:.5px;
+}
+
+p{
+  opacity:.8;
+  margin-bottom:40px;
 }
 
 button{
   border:none;
-  padding:15px 36px;
+  padding:16px 38px;
   font-size:18px;
   border-radius:40px;
   cursor:pointer;
   margin:12px;
-  transition:.25s;
+  transition:.3s;
 }
 
 #yes{
-  background:#ff4d6d;
+  background:var(--pink);
   color:white;
+  box-shadow:0 10px 30px #ff4d6d55;
 }
 
-#yes:hover{transform:scale(1.08)}
+#yes:hover{transform:scale(1.1)}
 
-#no{background:#eee; position:relative}
+#no{
+  background:#ffffff22;
+  color:white;
+  position:relative;
+}
 
 #final{
   position:fixed;
@@ -64,20 +91,38 @@ button{
   justify-content:center;
   align-items:center;
   flex-direction:column;
-  font-size:32px;
-  background:rgba(255,255,255,.97);
   text-align:center;
+  background:#0f0f12;
+  z-index:5;
 }
 
+#final h2{
+  font-size:42px;
+  margin-bottom:20px;
+}
+
+#final p{font-size:20px; opacity:.8}
+
+/* heart particles */
 .heart{
   position:fixed;
-  font-size:24px;
+  font-size:22px;
   animation:float 4s linear forwards;
 }
 
 @keyframes float{
-  from{transform:translateY(0);opacity:1}
-  to{transform:translateY(-110vh);opacity:0}
+  from{transform:translateY(0) scale(.7);opacity:1}
+  to{transform:translateY(-120vh) scale(1.4);opacity:0}
+}
+
+/* glow pulse */
+.pulse{
+  animation:pulse 1.6s infinite alternate;
+}
+
+@keyframes pulse{
+  from{box-shadow:0 0 0 #ff4d6d00}
+  to{box-shadow:0 0 40px #ff4d6d88}
 }
 </style>
 </head>
@@ -85,56 +130,60 @@ button{
 <body>
 
 <div class="card">
-<h1 id="title">Important question.</h1>
-<button id="yes">Yes</button>
+<h1 id="title">One question. Answer honestly.</h1>
+<p id="sub">I made this instead of a normal message.</p>
+<button id="yes" class="pulse">Yes</button>
 <button id="no">No</button>
 </div>
 
 <div id="final">
-<div id="typed"></div>
+<h2 id="finalText"></h2>
+<p>Had to make it official.</p>
 </div>
 
 <script>
 const yes=document.getElementById("yes");
 const no=document.getElementById("no");
 const final=document.getElementById("final");
-const typed=document.getElementById("typed");
+const finalText=document.getElementById("finalText");
 const title=document.getElementById("title");
+const sub=document.getElementById("sub");
 
-const noTexts=[
-"No",
-"You sure?",
-"Think again",
-"That seems wrong",
-"Try again"
+const noLines=[
+"That felt wrong.",
+"Try again.",
+"Suspicious answer.",
+"Reconsider.",
+"System rejects that."
 ];
 
 let scale=1,i=0;
 
 no.onclick=()=>{
-  scale*=0.75;
-  no.style.transform=`scale(${scale})`;
-  no.textContent=noTexts[i++%noTexts.length];
+  scale*=0.8;
+  no.style.transform=`scale(${scale}) rotate(${Math.random()*14-7}deg)`;
+  no.textContent=noLines[i++%noLines.length];
 
-  no.style.left=(Math.random()*120-60)+"px";
-  no.style.top=(Math.random()*80-40)+"px";
+  no.style.left=(Math.random()*140-70)+"px";
+  no.style.top=(Math.random()*90-45)+"px";
 
-  title.textContent="Careful. Wrong answer detected.";
+  title.textContent="Be serious.";
+  sub.textContent="There is clearly a correct answer.";
 };
 
 yes.onclick=()=>{
   final.style.display="flex";
-  typeText("Good choice. Valentine secured.");
+  typeText("So it’s official. You’re my Valentine.");
   hearts();
 };
 
 function typeText(t){
-  let idx=0;
-  typed.textContent="";
+  let i=0;
+  finalText.textContent="";
   const inter=setInterval(()=>{
-    typed.textContent+=t[idx++];
-    if(idx>=t.length) clearInterval(inter);
-  },35);
+    finalText.textContent+=t[i++];
+    if(i>=t.length) clearInterval(inter);
+  },32);
 }
 
 function hearts(){
@@ -146,7 +195,7 @@ function hearts(){
     h.style.bottom="-20px";
     document.body.appendChild(h);
     setTimeout(()=>h.remove(),4000);
-  },220);
+  },200);
 }
 </script>
 
