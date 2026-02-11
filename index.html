@@ -1,49 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>For You</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Valentine</title>
 
 <style>
 body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-family:system-ui,-apple-system,sans-serif;
-    background:linear-gradient(120deg,#1f1f1f,#3b2d38,#2c3e50);
-    background-size:300% 300%;
-    animation:bg 14s ease infinite;
-    color:white;
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:system-ui,-apple-system,sans-serif;
+  background:linear-gradient(-45deg,#ff758c,#ff7eb3,#65c7f7,#9cecfb);
+  background-size:400% 400%;
+  animation:bg 12s ease infinite;
+  overflow:hidden;
 }
 
 @keyframes bg{
-    0%,100%{background-position:0 50%}
-    50%{background-position:100% 50%}
+  0%,100%{background-position:0 50%}
+  50%{background-position:100% 50%}
 }
 
 .card{
-    max-width:620px;
-    padding:50px 40px;
-    text-align:center;
-    backdrop-filter:blur(12px);
-    background:rgba(255,255,255,.08);
-    border-radius:20px;
-    box-shadow:0 25px 60px rgba(0,0,0,.4);
+  background:rgba(255,255,255,.92);
+  padding:50px 40px;
+  border-radius:24px;
+  text-align:center;
+  box-shadow:0 30px 70px rgba(0,0,0,.25);
+  max-width:520px;
 }
 
-.text{
-    font-size:26px;
-    line-height:1.5;
-    min-height:90px;
+h1{
+  margin-bottom:30px;
+  font-weight:600;
 }
 
-.small{
-    margin-top:30px;
-    opacity:.6;
-    font-size:14px;
+button{
+  border:none;
+  padding:15px 36px;
+  font-size:18px;
+  border-radius:40px;
+  cursor:pointer;
+  margin:12px;
+  transition:.25s;
+}
+
+#yes{
+  background:#ff4d6d;
+  color:white;
+}
+
+#yes:hover{transform:scale(1.08)}
+
+#no{background:#eee; position:relative}
+
+#final{
+  position:fixed;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  font-size:32px;
+  background:rgba(255,255,255,.97);
+  text-align:center;
+}
+
+.heart{
+  position:fixed;
+  font-size:24px;
+  animation:float 4s linear forwards;
+}
+
+@keyframes float{
+  from{transform:translateY(0);opacity:1}
+  to{transform:translateY(-110vh);opacity:0}
 }
 </style>
 </head>
@@ -51,38 +85,69 @@ body{
 <body>
 
 <div class="card">
-    <div class="text" id="text"></div>
-    <div class="small">click anywhere</div>
+<h1 id="title">Important question.</h1>
+<button id="yes">Yes</button>
+<button id="no">No</button>
+</div>
+
+<div id="final">
+<div id="typed"></div>
 </div>
 
 <script>
-const messages=[
-"Out of everyone I know…",
-"there’s something about you that stays with me.",
-"Your energy. Your mind. Your presence.",
-"It makes ordinary moments feel different.",
-"So I figured I’d ask properly.",
-"Will you be my Valentine?"
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const final=document.getElementById("final");
+const typed=document.getElementById("typed");
+const title=document.getElementById("title");
+
+const noTexts=[
+"No",
+"You sure?",
+"Think again",
+"That seems wrong",
+"Try again"
 ];
 
-let i=0;
-const text=document.getElementById("text");
+let scale=1,i=0;
 
-function type(msg){
-    text.textContent="";
-    let idx=0;
-    const t=setInterval(()=>{
-        text.textContent+=msg[idx++];
-        if(idx>=msg.length) clearInterval(t);
-    },32);
+no.onclick=()=>{
+  scale*=0.75;
+  no.style.transform=`scale(${scale})`;
+  no.textContent=noTexts[i++%noTexts.length];
+
+  no.style.left=(Math.random()*120-60)+"px";
+  no.style.top=(Math.random()*80-40)+"px";
+
+  title.textContent="Careful. Wrong answer detected.";
+};
+
+yes.onclick=()=>{
+  final.style.display="flex";
+  typeText("Good choice. Valentine secured.");
+  hearts();
+};
+
+function typeText(t){
+  let idx=0;
+  typed.textContent="";
+  const inter=setInterval(()=>{
+    typed.textContent+=t[idx++];
+    if(idx>=t.length) clearInterval(inter);
+  },35);
 }
 
-type(messages[0]);
-
-document.body.onclick=()=>{
-    i++;
-    if(i<messages.length) type(messages[i]);
-};
+function hearts(){
+  setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.textContent="❤";
+    h.style.left=Math.random()*100+"vw";
+    h.style.bottom="-20px";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  },220);
+}
 </script>
 
 </body>
